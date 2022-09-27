@@ -1,29 +1,40 @@
 #!/usr/bin/python3
-def print_dict_sorted_nonzero(status_codes):
-    """Subroutine to print status codes with nonzero value in
-    numericalorder.
-    Args:
-        status_codes (dict): dictionary of status codes and the
-            number of times each one has been returned.
-    """
-    sorted_keys = sorted(status_codes.keys())
-    print('\n'.join(["{:d}: {:d}".format(k, status_codes[k])
-                     for k in sorted_keys if status_codes[k] != 0]))
+"""
+reads stdin line by line and computes metrics
+"""
+import sys
 
-if __name__ == "__main__":
-    import sys
+file_size = 0
+status_tally = {"200": 0, "301": 0, "400": 0, "401": 0,
+                "403": 0, "404": 0, "405": 0, "500": 0}
+i = 0
+try:
+    for line in sys.stdin:
+        tokens = line.split()
+        if len(tokens) >= 2:
+            a = i
+            if tokens[-2] in status_tally:
+                status_tally[tokens[-2]] += 1
+                i += 1
+            try:
+                file_size += int(tokens[-1])
+                if a == i:
+                    i += 1
+            except:
+                if a == i:
+                    continue
+        if i % 10 == 0:
+            print("File size: {:d}".format(file_size))
+            for key, value in sorted(status_tally.items()):
+                if value:
+                    print("{:s}: {:d}".format(key, value))
+    print("File size: {:d}".format(file_size))
+    for key, value in sorted(status_tally.items()):
+        if value:
+            print("{:s}: {:d}".format(key, value))
 
-    try:
-        total = 0
-        status_codes = \
-            {code: 0 for code in [200, 301, 400, 401, 403, 404, 405, 500]}
-        for n, line in enumerate(sys.stdin, 1):
-            words = line.split()
-            total += int(words[-1])
-            status_codes[int(words[-2])] += 1
-            if n % 10 == 0:
-                print("File size: {:d}".format(total))
-                print_dict_sorted_nonzero(status_codes)
-    finally:
-        print("File size: {:d}".format(total))
-        print_dict_sorted_nonzero(status_codes)
+except KeyboardInterrupt:
+    print("File size: {:d}".format(file_size))
+    for key, value in sorted(status_tally.items()):
+        if value:
+            print("{:s}: {:d}".format(key, value))
