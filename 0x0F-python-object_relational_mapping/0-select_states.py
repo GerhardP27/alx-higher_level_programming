@@ -16,3 +16,4 @@ if __name__ == '__main__':
         print(rows)
     cr.close()
     db.close()
+    
