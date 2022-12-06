@@ -9,7 +9,7 @@ from model_city import City
 
 if __name__ == "__main__":
     eng = create_engine('mysql+mysqldb://{}:{}@localhost/{}'
-                        .format(sys.argv[1], sys.argv[2],
+                        .format(host="localhost", port=3306, sys.argv[1], sys.argv[2],
                                 sys.argv[3], pool_pre_ping=True))
     Base.metadata.create_all(eng)
     Session = sessionmaker(bind=eng)
